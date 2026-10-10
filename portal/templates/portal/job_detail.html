@@ -1,0 +1,28 @@
+{% extends 'portal/base.html' %}
+{% block content %}
+<div class="card mb-4">
+    <div class="card-body">
+        <h2>{{ job.title }}</h2>
+        <h5 class="text-muted">{{ job.company.name }} | {{ job.location }} | Salary: ${{ job.salary|default:"N/A" }}</h5>
+        <hr>
+        <p>{{ job.description }}</p>
+        {% if user == job.company.user %}
+            <a href="{% url 'update_job' job.pk %}" class="btn btn-warning">Edit Job</a>
+            <a href="{% url 'delete_job' job.pk %}" class="btn btn-danger">Delete Job</a>
+        {% endif %}
+    </div>
+</div>
+
+{% if user.is_authenticated and not user.company %}
+    <h3>Apply for this position</h3>
+    {% if has_applied %}
+        <div class="alert alert-success">You have already applied for this job!</div>
+    {% else %}
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Submit Application</button>
+        </form>
+    {% endif %}
+{% endif %}
+{% endblock %}

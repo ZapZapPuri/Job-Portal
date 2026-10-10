@@ -1,0 +1,44 @@
+{% extends 'portal/base.html' %}
+{% block content %}
+<h2>Find Your Next Job</h2>
+
+<form method="GET" class="row g-3 mb-4">
+    <div class="col-md-4">
+        <input type="text" name="q" class="form-control" placeholder="Search title or keyword..." value="{{ request.GET.q }}">
+    </div>
+    <div class="col-md-3">
+        <select name="category" class="form-select">
+            <option value="">All Categories</option>
+            {% for cat in categories %}
+                <option value="{{ cat.id }}" {% if request.GET.category == cat.id|stringformat:"i" %}selected{% endif %}>{{ cat.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-3">
+        <input type="text" name="location" class="form-control" placeholder="Location..." value="{{ request.GET.location }}">
+    </div>
+    <div class="col-md-2">
+        <button type="submit" class="btn btn-primary w-100">Filter</button>
+    </div>
+</form>
+
+<div class="row">
+    {% for job in jobs %}
+    <div class="col-md-6 mb-3">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">{{ job.title }}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">{{ job.company.name }} — {{ job.location }}</h6>
+                <p class="card-text">{{ job.description|truncatewords:20 }}</p>
+                <a href="{% url 'job_detail' job.pk %}" class="btn btn-outline-primary btn-sm">View Details</a>
+                {% if user == job.company.user %}
+                    <a href="{% url 'applicant_list' job.pk %}" class="btn btn-info btn-sm">Applicants ({{ job.applications.count }})</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p>No jobs found matching your criteria.</p>
+    {% endfor %}
+</div>
+{% endblock %}

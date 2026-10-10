@@ -1,0 +1,33 @@
+{% extends 'portal/base.html' %}
+{% block content %}
+<h2>Applicants for {{ job.title }}</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Applicant</th>
+            <th>Email</th>
+            <th>Resume</th>
+            <th>Cover Letter</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for app in applications %}
+        <tr>
+            <td>{{ app.applicant.username }}</td>
+            <td>{{ app.applicant.email }}</td>
+            <td><a href="{{ app.resume.url }}" target="_blank">Download Resume</a></td>
+            <td>{{ app.cover_letter }}</td>
+            <td><span class="badge bg-info">{{ app.status }}</span></td>
+            <td>
+                <a href="{% url 'update_status' app.id 'Accepted' %}" class="btn btn-sm btn-success">Accept</a>
+                <a href="{% url 'update_status' app.id 'Rejected' %}" class="btn btn-sm btn-danger">Reject</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6">No applications received yet.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
